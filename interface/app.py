@@ -1,5 +1,6 @@
 import os
 import threading
+import time
 from collections import Counter
 
 import av
@@ -145,9 +146,16 @@ if mode == "Webcam (tiempo real)":
         if ctx.video_processor:
             placeholder.write("Iniciando...")
             while ctx.state.playing:
-                counts = ctx.video_processor.last_counts
+                vp = ctx.video_processor
+                if vp is None:
+                    placeholder.write("Esperando a la webcam...")
+                    time.sleep(0.05)
+                    continue
+
+                counts = vp.last_counts
                 with placeholder.container():
                     render_counts(counts)
+                time.sleep(0.05)
         else:
             st.write("Pulsa 'START' para activar la webcam")
 
